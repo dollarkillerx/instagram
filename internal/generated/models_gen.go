@@ -8,6 +8,20 @@ import (
 	"strconv"
 )
 
+type AppInfo struct {
+	AppID                      string   `json:"appId"`
+	AppVersion                 float32  `json:"appVersion"`
+	MinimumVersion             float32  `json:"minimumVersion"`
+	State                      AppState `json:"state"`
+	ErrorNotification          string   `json:"errorNotification"`
+	NormalNotification         string   `json:"normalNotification"`
+	DNSServerAddress           string   `json:"dnsServerAddress"`
+	Website                    string   `json:"website"`
+	TelegramCustomerService    string   `json:"telegramCustomerService"`
+	TelegramNotificationCenter string   `json:"telegramNotificationCenter"`
+	TelegramGroup              string   `json:"telegramGroup"`
+}
+
 type AuthPayload struct {
 	AccessTokenString string `json:"accessTokenString"`
 	UserID            string `json:"userID"`
@@ -38,6 +52,61 @@ type UserInformation struct {
 	Role        Role   `json:"role"`
 	Account     string `json:"account"`
 	AccountName string `json:"accountName"`
+}
+
+type UserRegistration struct {
+	CaptchaID   string `json:"captchaId"`
+	CaptchaCode string `json:"captchaCode"`
+	Token       string `json:"token"`
+	DeviceName  string `json:"deviceName"`
+	DeviceID    string `json:"deviceId"`
+	AppID       string `json:"appId"`
+}
+
+type VideoInfo struct {
+	Img  string   `json:"img"`
+	Urls []string `json:"urls"`
+}
+
+type AppState string
+
+const (
+	AppStateEnable   AppState = "Enable"
+	AppStateDisabled AppState = "Disabled"
+)
+
+var AllAppState = []AppState{
+	AppStateEnable,
+	AppStateDisabled,
+}
+
+func (e AppState) IsValid() bool {
+	switch e {
+	case AppStateEnable, AppStateDisabled:
+		return true
+	}
+	return false
+}
+
+func (e AppState) String() string {
+	return string(e)
+}
+
+func (e *AppState) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = AppState(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid AppState", str)
+	}
+	return nil
+}
+
+func (e AppState) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
 type Role string

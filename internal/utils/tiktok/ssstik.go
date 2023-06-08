@@ -2,6 +2,7 @@ package tiktok
 
 import (
 	"bytes"
+
 	"github.com/PuerkitoBio/goquery"
 	"github.com/go-resty/resty/v2"
 	"strings"

@@ -17,6 +17,11 @@ func (r *mutationResolver) Healthcheck(ctx context.Context) (string, error) {
 }
 
 // // foo
+func (r *mutationResolver) UserRegistration(ctx context.Context, input *UserRegistration) (*AuthPayload, error) {
+	panic("not implemented")
+}
+
+// // foo
 func (r *mutationResolver) LoginByPassword(ctx context.Context, input *LoginByPassword) (*AuthPayload, error) {
 	panic("not implemented")
 }
@@ -33,6 +38,16 @@ func (r *queryResolver) Healthcheck(ctx context.Context) (string, error) {
 
 // // foo
 func (r *queryResolver) Now(ctx context.Context) (*timestamppb.Timestamp, error) {
+	panic("not implemented")
+}
+
+// // foo
+func (r *queryResolver) App(ctx context.Context, appID string) (*AppInfo, error) {
+	panic("not implemented")
+}
+
+// // foo
+func (r *queryResolver) VideoDownload(ctx context.Context, url string) (*VideoInfo, error) {
 	panic("not implemented")
 }
 

@@ -72,3 +72,11 @@ func (r *queryResolver) User(ctx context.Context) (*generated.UserInformation, e
 		AccountName: fromContext.AccountName,
 	}, nil
 }
+
+// // foo
+func (r *mutationResolver) UserRegistration(ctx context.Context, input *generated.UserRegistration) (*generated.AuthPayload, error) {
+	return &generated.AuthPayload{
+		AccessTokenString: "instagram",
+		UserID:            "user-id",
+	}, nil
+}

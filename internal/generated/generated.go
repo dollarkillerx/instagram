@@ -48,6 +48,20 @@ type DirectiveRoot struct {
 }
 
 type ComplexityRoot struct {
+	AppInfo struct {
+		AppID                      func(childComplexity int) int
+		AppVersion                 func(childComplexity int) int
+		DNSServerAddress           func(childComplexity int) int
+		ErrorNotification          func(childComplexity int) int
+		MinimumVersion             func(childComplexity int) int
+		NormalNotification         func(childComplexity int) int
+		State                      func(childComplexity int) int
+		TelegramCustomerService    func(childComplexity int) int
+		TelegramGroup              func(childComplexity int) int
+		TelegramNotificationCenter func(childComplexity int) int
+		Website                    func(childComplexity int) int
+	}
+
 	AuthPayload struct {
 		AccessTokenString func(childComplexity int) int
 		UserID            func(childComplexity int) int
@@ -59,16 +73,19 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		Healthcheck     func(childComplexity int) int
-		LoginByPassword func(childComplexity int, input *LoginByPassword) int
-		Registry        func(childComplexity int, input *Registry) int
+		Healthcheck      func(childComplexity int) int
+		LoginByPassword  func(childComplexity int, input *LoginByPassword) int
+		Registry         func(childComplexity int, input *Registry) int
+		UserRegistration func(childComplexity int, input *UserRegistration) int
 	}
 
 	Query struct {
-		Captcha     func(childComplexity int) int
-		Healthcheck func(childComplexity int) int
-		Now         func(childComplexity int) int
-		User        func(childComplexity int) int
+		App           func(childComplexity int, appID string) int
+		Captcha       func(childComplexity int) int
+		Healthcheck   func(childComplexity int) int
+		Now           func(childComplexity int) int
+		User          func(childComplexity int) int
+		VideoDownload func(childComplexity int, url string) int
 	}
 
 	UserInformation struct {
@@ -77,16 +94,24 @@ type ComplexityRoot struct {
 		AccountName func(childComplexity int) int
 		Role        func(childComplexity int) int
 	}
+
+	VideoInfo struct {
+		Img  func(childComplexity int) int
+		Urls func(childComplexity int) int
+	}
 }
 
 type MutationResolver interface {
 	Healthcheck(ctx context.Context) (string, error)
+	UserRegistration(ctx context.Context, input *UserRegistration) (*AuthPayload, error)
 	LoginByPassword(ctx context.Context, input *LoginByPassword) (*AuthPayload, error)
 	Registry(ctx context.Context, input *Registry) (*wrapperspb.BoolValue, error)
 }
 type QueryResolver interface {
 	Healthcheck(ctx context.Context) (string, error)
 	Now(ctx context.Context) (*timestamppb.Timestamp, error)
+	App(ctx context.Context, appID string) (*AppInfo, error)
+	VideoDownload(ctx context.Context, url string) (*VideoInfo, error)
 	User(ctx context.Context) (*UserInformation, error)
 	Captcha(ctx context.Context) (*Captcha, error)
 }
@@ -105,6 +130,83 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	ec := executionContext{nil, e}
 	_ = ec
 	switch typeName + "." + field {
+
+	case "AppInfo.appId":
+		if e.complexity.AppInfo.AppID == nil {
+			break
+		}
+
+		return e.complexity.AppInfo.AppID(childComplexity), true
+
+	case "AppInfo.appVersion":
+		if e.complexity.AppInfo.AppVersion == nil {
+			break
+		}
+
+		return e.complexity.AppInfo.AppVersion(childComplexity), true
+
+	case "AppInfo.dnsServerAddress":
+		if e.complexity.AppInfo.DNSServerAddress == nil {
+			break
+		}
+
+		return e.complexity.AppInfo.DNSServerAddress(childComplexity), true
+
+	case "AppInfo.errorNotification":
+		if e.complexity.AppInfo.ErrorNotification == nil {
+			break
+		}
+
+		return e.complexity.AppInfo.ErrorNotification(childComplexity), true
+
+	case "AppInfo.minimumVersion":
+		if e.complexity.AppInfo.MinimumVersion == nil {
+			break
+		}
+
+		return e.complexity.AppInfo.MinimumVersion(childComplexity), true
+
+	case "AppInfo.normalNotification":
+		if e.complexity.AppInfo.NormalNotification == nil {
+			break
+		}
+
+		return e.complexity.AppInfo.NormalNotification(childComplexity), true
+
+	case "AppInfo.state":
+		if e.complexity.AppInfo.State == nil {
+			break
+		}
+
+		return e.complexity.AppInfo.State(childComplexity), true
+
+	case "AppInfo.telegramCustomerService":
+		if e.complexity.AppInfo.TelegramCustomerService == nil {
+			break
+		}
+
+		return e.complexity.AppInfo.TelegramCustomerService(childComplexity), true
+
+	case "AppInfo.telegramGroup":
+		if e.complexity.AppInfo.TelegramGroup == nil {
+			break
+		}
+
+		return e.complexity.AppInfo.TelegramGroup(childComplexity), true
+
+	case "AppInfo.telegramNotificationCenter":
+		if e.complexity.AppInfo.TelegramNotificationCenter == nil {
+			break
+		}
+
+		return e.complexity.AppInfo.TelegramNotificationCenter(childComplexity), true
+
+	case "AppInfo.website":
+		if e.complexity.AppInfo.Website == nil {
+			break
+		}
+
+		return e.complexity.AppInfo.Website(childComplexity), true
 
 	case "AuthPayload.accessTokenString":
 		if e.complexity.AuthPayload.AccessTokenString == nil {
@@ -165,6 +267,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.Registry(childComplexity, args["input"].(*Registry)), true
 
+	case "Mutation.userRegistration":
+		if e.complexity.Mutation.UserRegistration == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_userRegistration_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UserRegistration(childComplexity, args["input"].(*UserRegistration)), true
+
+	case "Query.app":
+		if e.complexity.Query.App == nil {
+			break
+		}
+
+		args, err := ec.field_Query_app_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.App(childComplexity, args["appId"].(string)), true
+
 	case "Query.captcha":
 		if e.complexity.Query.Captcha == nil {
 			break
@@ -192,6 +318,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.User(childComplexity), true
+
+	case "Query.videoDownload":
+		if e.complexity.Query.VideoDownload == nil {
+			break
+		}
+
+		args, err := ec.field_Query_videoDownload_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.VideoDownload(childComplexity, args["url"].(string)), true
 
 	case "UserInformation.account":
 		if e.complexity.UserInformation.Account == nil {
@@ -221,6 +359,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.UserInformation.Role(childComplexity), true
 
+	case "VideoInfo.img":
+		if e.complexity.VideoInfo.Img == nil {
+			break
+		}
+
+		return e.complexity.VideoInfo.Img(childComplexity), true
+
+	case "VideoInfo.urls":
+		if e.complexity.VideoInfo.Urls == nil {
+			break
+		}
+
+		return e.complexity.VideoInfo.Urls(childComplexity), true
+
 	}
 	return 0, false
 }
@@ -231,6 +383,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
 		ec.unmarshalInputLoginByPassword,
 		ec.unmarshalInputRegistry,
+		ec.unmarshalInputUserRegistration,
 	)
 	first := true
 
@@ -323,6 +476,48 @@ scalar Timestamp
 scalar Map
 scalar StringMap
 scalar Any`, BuiltIn: false},
+	{Name: "../graphql/tiktok/tiktok.graphql", Input: `extend type Query {
+    app(appId: String!): AppInfo! # 获取app信息
+    videoDownload(url: String!): VideoInfo! # video
+}
+
+extend type Mutation {
+    userRegistration(input: UserRegistration): AuthPayload # 用户注册
+}
+
+type VideoInfo {
+    img: String!
+    urls: [String!]!
+}
+
+type AppInfo {
+    appId: String!
+    appVersion: Float32!
+    minimumVersion: Float32!
+    state: AppState!
+    errorNotification: String!
+    normalNotification: String!
+    dnsServerAddress: String!
+
+    website: String!
+    telegramCustomerService: String!
+    telegramNotificationCenter: String!
+    telegramGroup: String!
+}
+
+enum AppState {
+    Enable
+    Disabled
+}
+
+input UserRegistration {
+    captchaId: String!
+    captchaCode: String!
+    token: String!      # 用户token
+    deviceName: String! # 设备名称
+    deviceId: String!   # 设备id
+    appId: String!  # app项目的id ， 免费卖广告， 收费卖套餐
+}`, BuiltIn: false},
 	{Name: "../graphql/user/auth.graphql", Input: `extend type Query {
     user: UserInformation @hasLogined
     captcha: Captcha
@@ -402,6 +597,21 @@ func (ec *executionContext) field_Mutation_registry_args(ctx context.Context, ra
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_userRegistration_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *UserRegistration
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalOUserRegistration2ᚖgithubᚗcomᚋdollarkillerxᚋgraphql_templateᚋinternalᚋgeneratedᚐUserRegistration(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -414,6 +624,36 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 		}
 	}
 	args["name"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_app_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["appId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("appId"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["appId"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_videoDownload_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["url"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("url"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["url"] = arg0
 	return args, nil
 }
 
@@ -454,6 +694,490 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 // endregion ************************** directives.gotpl **************************
 
 // region    **************************** field.gotpl *****************************
+
+func (ec *executionContext) _AppInfo_appId(ctx context.Context, field graphql.CollectedField, obj *AppInfo) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AppInfo_appId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AppID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AppInfo_appId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AppInfo",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AppInfo_appVersion(ctx context.Context, field graphql.CollectedField, obj *AppInfo) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AppInfo_appVersion(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AppVersion, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float32)
+	fc.Result = res
+	return ec.marshalNFloat322float32(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AppInfo_appVersion(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AppInfo",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float32 does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AppInfo_minimumVersion(ctx context.Context, field graphql.CollectedField, obj *AppInfo) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AppInfo_minimumVersion(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.MinimumVersion, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float32)
+	fc.Result = res
+	return ec.marshalNFloat322float32(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AppInfo_minimumVersion(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AppInfo",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float32 does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AppInfo_state(ctx context.Context, field graphql.CollectedField, obj *AppInfo) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AppInfo_state(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.State, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(AppState)
+	fc.Result = res
+	return ec.marshalNAppState2githubᚗcomᚋdollarkillerxᚋgraphql_templateᚋinternalᚋgeneratedᚐAppState(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AppInfo_state(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AppInfo",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type AppState does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AppInfo_errorNotification(ctx context.Context, field graphql.CollectedField, obj *AppInfo) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AppInfo_errorNotification(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ErrorNotification, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AppInfo_errorNotification(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AppInfo",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AppInfo_normalNotification(ctx context.Context, field graphql.CollectedField, obj *AppInfo) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AppInfo_normalNotification(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.NormalNotification, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AppInfo_normalNotification(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AppInfo",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AppInfo_dnsServerAddress(ctx context.Context, field graphql.CollectedField, obj *AppInfo) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AppInfo_dnsServerAddress(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DNSServerAddress, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AppInfo_dnsServerAddress(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AppInfo",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AppInfo_website(ctx context.Context, field graphql.CollectedField, obj *AppInfo) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AppInfo_website(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Website, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AppInfo_website(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AppInfo",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AppInfo_telegramCustomerService(ctx context.Context, field graphql.CollectedField, obj *AppInfo) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AppInfo_telegramCustomerService(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TelegramCustomerService, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AppInfo_telegramCustomerService(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AppInfo",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AppInfo_telegramNotificationCenter(ctx context.Context, field graphql.CollectedField, obj *AppInfo) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AppInfo_telegramNotificationCenter(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TelegramNotificationCenter, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AppInfo_telegramNotificationCenter(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AppInfo",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AppInfo_telegramGroup(ctx context.Context, field graphql.CollectedField, obj *AppInfo) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AppInfo_telegramGroup(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TelegramGroup, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AppInfo_telegramGroup(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AppInfo",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
 
 func (ec *executionContext) _AuthPayload_accessTokenString(ctx context.Context, field graphql.CollectedField, obj *AuthPayload) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_AuthPayload_accessTokenString(ctx, field)
@@ -675,6 +1399,64 @@ func (ec *executionContext) fieldContext_Mutation_healthcheck(ctx context.Contex
 	return fc, nil
 }
 
+func (ec *executionContext) _Mutation_userRegistration(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_userRegistration(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UserRegistration(rctx, fc.Args["input"].(*UserRegistration))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*AuthPayload)
+	fc.Result = res
+	return ec.marshalOAuthPayload2ᚖgithubᚗcomᚋdollarkillerxᚋgraphql_templateᚋinternalᚋgeneratedᚐAuthPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_userRegistration(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "accessTokenString":
+				return ec.fieldContext_AuthPayload_accessTokenString(ctx, field)
+			case "userID":
+				return ec.fieldContext_AuthPayload_userID(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type AuthPayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_userRegistration_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Mutation_loginByPassword(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_loginByPassword(ctx, field)
 	if err != nil {
@@ -869,6 +1651,146 @@ func (ec *executionContext) fieldContext_Query_now(ctx context.Context, field gr
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Timestamp does not have child fields")
 		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_app(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_app(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().App(rctx, fc.Args["appId"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*AppInfo)
+	fc.Result = res
+	return ec.marshalNAppInfo2ᚖgithubᚗcomᚋdollarkillerxᚋgraphql_templateᚋinternalᚋgeneratedᚐAppInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_app(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "appId":
+				return ec.fieldContext_AppInfo_appId(ctx, field)
+			case "appVersion":
+				return ec.fieldContext_AppInfo_appVersion(ctx, field)
+			case "minimumVersion":
+				return ec.fieldContext_AppInfo_minimumVersion(ctx, field)
+			case "state":
+				return ec.fieldContext_AppInfo_state(ctx, field)
+			case "errorNotification":
+				return ec.fieldContext_AppInfo_errorNotification(ctx, field)
+			case "normalNotification":
+				return ec.fieldContext_AppInfo_normalNotification(ctx, field)
+			case "dnsServerAddress":
+				return ec.fieldContext_AppInfo_dnsServerAddress(ctx, field)
+			case "website":
+				return ec.fieldContext_AppInfo_website(ctx, field)
+			case "telegramCustomerService":
+				return ec.fieldContext_AppInfo_telegramCustomerService(ctx, field)
+			case "telegramNotificationCenter":
+				return ec.fieldContext_AppInfo_telegramNotificationCenter(ctx, field)
+			case "telegramGroup":
+				return ec.fieldContext_AppInfo_telegramGroup(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type AppInfo", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_app_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_videoDownload(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_videoDownload(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().VideoDownload(rctx, fc.Args["url"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*VideoInfo)
+	fc.Result = res
+	return ec.marshalNVideoInfo2ᚖgithubᚗcomᚋdollarkillerxᚋgraphql_templateᚋinternalᚋgeneratedᚐVideoInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_videoDownload(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "img":
+				return ec.fieldContext_VideoInfo_img(ctx, field)
+			case "urls":
+				return ec.fieldContext_VideoInfo_urls(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type VideoInfo", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_videoDownload_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
 	}
 	return fc, nil
 }
@@ -1286,6 +2208,94 @@ func (ec *executionContext) _UserInformation_accountName(ctx context.Context, fi
 func (ec *executionContext) fieldContext_UserInformation_accountName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "UserInformation",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _VideoInfo_img(ctx context.Context, field graphql.CollectedField, obj *VideoInfo) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_VideoInfo_img(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Img, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_VideoInfo_img(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "VideoInfo",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _VideoInfo_urls(ctx context.Context, field graphql.CollectedField, obj *VideoInfo) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_VideoInfo_urls(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Urls, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]string)
+	fc.Result = res
+	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_VideoInfo_urls(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "VideoInfo",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -3181,6 +4191,74 @@ func (ec *executionContext) unmarshalInputRegistry(ctx context.Context, obj inte
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputUserRegistration(ctx context.Context, obj interface{}) (UserRegistration, error) {
+	var it UserRegistration
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"captchaId", "captchaCode", "token", "deviceName", "deviceId", "appId"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "captchaId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("captchaId"))
+			it.CaptchaID, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "captchaCode":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("captchaCode"))
+			it.CaptchaCode, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "token":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
+			it.Token, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "deviceName":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deviceName"))
+			it.DeviceName, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "deviceId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deviceId"))
+			it.DeviceID, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "appId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("appId"))
+			it.AppID, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 // endregion **************************** input.gotpl *****************************
 
 // region    ************************** interface.gotpl ***************************
@@ -3188,6 +4266,104 @@ func (ec *executionContext) unmarshalInputRegistry(ctx context.Context, obj inte
 // endregion ************************** interface.gotpl ***************************
 
 // region    **************************** object.gotpl ****************************
+
+var appInfoImplementors = []string{"AppInfo"}
+
+func (ec *executionContext) _AppInfo(ctx context.Context, sel ast.SelectionSet, obj *AppInfo) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, appInfoImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("AppInfo")
+		case "appId":
+
+			out.Values[i] = ec._AppInfo_appId(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "appVersion":
+
+			out.Values[i] = ec._AppInfo_appVersion(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "minimumVersion":
+
+			out.Values[i] = ec._AppInfo_minimumVersion(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "state":
+
+			out.Values[i] = ec._AppInfo_state(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "errorNotification":
+
+			out.Values[i] = ec._AppInfo_errorNotification(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "normalNotification":
+
+			out.Values[i] = ec._AppInfo_normalNotification(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "dnsServerAddress":
+
+			out.Values[i] = ec._AppInfo_dnsServerAddress(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "website":
+
+			out.Values[i] = ec._AppInfo_website(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "telegramCustomerService":
+
+			out.Values[i] = ec._AppInfo_telegramCustomerService(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "telegramNotificationCenter":
+
+			out.Values[i] = ec._AppInfo_telegramNotificationCenter(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "telegramGroup":
+
+			out.Values[i] = ec._AppInfo_telegramGroup(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
 
 var authPayloadImplementors = []string{"AuthPayload"}
 
@@ -3287,6 +4463,12 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "userRegistration":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_userRegistration(ctx, field)
+			})
+
 		case "loginByPassword":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
@@ -3362,6 +4544,52 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_now(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
+		case "app":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_app(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
+		case "videoDownload":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_videoDownload(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -3472,6 +4700,41 @@ func (ec *executionContext) _UserInformation(ctx context.Context, sel ast.Select
 		case "accountName":
 
 			out.Values[i] = ec._UserInformation_accountName(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var videoInfoImplementors = []string{"VideoInfo"}
+
+func (ec *executionContext) _VideoInfo(ctx context.Context, sel ast.SelectionSet, obj *VideoInfo) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, videoInfoImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("VideoInfo")
+		case "img":
+
+			out.Values[i] = ec._VideoInfo_img(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "urls":
+
+			out.Values[i] = ec._VideoInfo_urls(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
@@ -3805,6 +5068,30 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 
 // region    ***************************** type.gotpl *****************************
 
+func (ec *executionContext) marshalNAppInfo2githubᚗcomᚋdollarkillerxᚋgraphql_templateᚋinternalᚋgeneratedᚐAppInfo(ctx context.Context, sel ast.SelectionSet, v AppInfo) graphql.Marshaler {
+	return ec._AppInfo(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNAppInfo2ᚖgithubᚗcomᚋdollarkillerxᚋgraphql_templateᚋinternalᚋgeneratedᚐAppInfo(ctx context.Context, sel ast.SelectionSet, v *AppInfo) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._AppInfo(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNAppState2githubᚗcomᚋdollarkillerxᚋgraphql_templateᚋinternalᚋgeneratedᚐAppState(ctx context.Context, v interface{}) (AppState, error) {
+	var res AppState
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNAppState2githubᚗcomᚋdollarkillerxᚋgraphql_templateᚋinternalᚋgeneratedᚐAppState(ctx context.Context, sel ast.SelectionSet, v AppState) graphql.Marshaler {
+	return v
+}
+
 func (ec *executionContext) unmarshalNBoolean2bool(ctx context.Context, v interface{}) (bool, error) {
 	res, err := graphql.UnmarshalBoolean(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -3812,6 +5099,21 @@ func (ec *executionContext) unmarshalNBoolean2bool(ctx context.Context, v interf
 
 func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.SelectionSet, v bool) graphql.Marshaler {
 	res := graphql.MarshalBoolean(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+	}
+	return res
+}
+
+func (ec *executionContext) unmarshalNFloat322float32(ctx context.Context, v interface{}) (float32, error) {
+	res, err := gql.UnmarshalFloat32(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNFloat322float32(ctx context.Context, sel ast.SelectionSet, v float32) graphql.Marshaler {
+	res := gql.MarshalFloat32(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -3843,6 +5145,38 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) unmarshalNString2ᚕstringᚄ(ctx context.Context, v interface{}) ([]string, error) {
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]string, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNString2string(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalNString2ᚕstringᚄ(ctx context.Context, sel ast.SelectionSet, v []string) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	for i := range v {
+		ret[i] = ec.marshalNString2string(ctx, sel, v[i])
+	}
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
 }
 
 func (ec *executionContext) unmarshalNTimestamp2googleᚗgolangᚗorgᚋprotobufᚋtypesᚋknownᚋtimestamppbᚐTimestamp(ctx context.Context, v interface{}) (timestamppb.Timestamp, error) {
@@ -3879,6 +5213,20 @@ func (ec *executionContext) marshalNTimestamp2ᚖgoogleᚗgolangᚗorgᚋprotobu
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) marshalNVideoInfo2githubᚗcomᚋdollarkillerxᚋgraphql_templateᚋinternalᚋgeneratedᚐVideoInfo(ctx context.Context, sel ast.SelectionSet, v VideoInfo) graphql.Marshaler {
+	return ec._VideoInfo(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNVideoInfo2ᚖgithubᚗcomᚋdollarkillerxᚋgraphql_templateᚋinternalᚋgeneratedᚐVideoInfo(ctx context.Context, sel ast.SelectionSet, v *VideoInfo) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._VideoInfo(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalN__Directive2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐDirective(ctx context.Context, sel ast.SelectionSet, v introspection.Directive) graphql.Marshaler {
@@ -4227,6 +5575,14 @@ func (ec *executionContext) marshalOUserInformation2ᚖgithubᚗcomᚋdollarkill
 		return graphql.Null
 	}
 	return ec._UserInformation(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOUserRegistration2ᚖgithubᚗcomᚋdollarkillerxᚋgraphql_templateᚋinternalᚋgeneratedᚐUserRegistration(ctx context.Context, v interface{}) (*UserRegistration, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputUserRegistration(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalO__EnumValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐEnumValueᚄ(ctx context.Context, sel ast.SelectionSet, v []introspection.EnumValue) graphql.Marshaler {

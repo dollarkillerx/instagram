@@ -1,0 +1,42 @@
+extend type Query {
+    app(appId: String!): AppInfo! # 获取app信息
+    videoDownload(url: String!): VideoInfo! # video
+}
+
+extend type Mutation {
+    userRegistration(input: UserRegistration): AuthPayload # 用户注册
+}
+
+type VideoInfo {
+    img: String!
+    urls: [String!]!
+}
+
+type AppInfo {
+    appId: String!
+    appVersion: Float32!
+    minimumVersion: Float32!
+    state: AppState!
+    errorNotification: String!
+    normalNotification: String!
+    dnsServerAddress: String!
+
+    website: String!
+    telegramCustomerService: String!
+    telegramNotificationCenter: String!
+    telegramGroup: String!
+}
+
+enum AppState {
+    Enable
+    Disabled
+}
+
+input UserRegistration {
+    captchaId: String!
+    captchaCode: String!
+    token: String!      # 用户token
+    deviceName: String! # 设备名称
+    deviceId: String!   # 设备id
+    appId: String!  # app项目的id ， 免费卖广告， 收费卖套餐
+}

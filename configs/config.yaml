@@ -16,4 +16,4 @@ PostgresConfig:
   Port: 5432
   User: root
   Password: root
-  DBName: gtest
+  DBName: video
